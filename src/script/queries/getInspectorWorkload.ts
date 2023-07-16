@@ -10,32 +10,14 @@ const GET_INSPECTOR_WORKLOAD = (queryName: string, user: string) =>
         logic: 'and',
         filters: [
           {
-            logic: 'and',
-            filters: [
-              {
-                logic: 'and',
-                filters: [],
-              },
-              {
-                logic: 'and',
-                filters: [
-                  {
-                    field: 'inspector_assigned_users',
-                    operator: 'contains',
-                    value: [`${user}`],
-                  },
-                  {
-                    field: 'complaint_status',
-                    operator: 'neq',
-                    value: 'Closed',
-                  },
-                ],
-              },
-            ],
+            field: 'inspector_assigned_users',
+            operator: 'contains',
+            value: [`${user}`],
           },
           {
-            logic: 'and',
-            filters: [],
+            field: 'complaint_status',
+            operator: 'neq',
+            value: 'Closed',
           },
         ],
       },

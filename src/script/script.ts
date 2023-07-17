@@ -40,16 +40,14 @@ const getFittestScore = (scores: InspectorScore) => {
 };
 
 export const runAutoAssignment = async (context: InvocationContext) => {
-  context.info(
-    `\n\n===========\nStarting complaint assignment at ${new Date().toISOString()}`
-  );
+  context.info(`Starting complaint assignment at ${new Date().toISOString()}`);
   if (!process.env.RESOURCES)
     throw new Error('No resources configured. Check environment variables');
 
   const resources = JSON.parse(process.env.RESOURCES);
 
   for (const [queryName, inspectorForm, countryName] of resources) {
-    context.info(`\nChecking for unassigned complaints in ${countryName}...`);
+    context.info(`Checking for unassigned complaints in ${countryName}...`);
 
     // For each query, get the unassigned complaints
     const unassignedComplaints = await getUnassignedComplaints(
@@ -138,11 +136,11 @@ export const runAutoAssignment = async (context: InvocationContext) => {
       await assignInspector(complaint.id, fittestInspector.user, context);
       inspectorWorkloads[fittestInspectorID]++;
 
-      context.info('\t→ Done!');
+      context.info(
+        `\tFinished assigning complaint ${complaint.incrementalId} to ${fittestInspector.name}`
+      );
     }
   }
 
-  context.info(
-    `\nFinished complaint assignment at ${new Date().toISOString()}`
-  );
+  context.info(`Finished complaint assignment at ${new Date().toISOString()}`);
 };

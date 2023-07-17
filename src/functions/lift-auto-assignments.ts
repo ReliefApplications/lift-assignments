@@ -9,6 +9,7 @@ export async function liftAutoAssignments(
 }
 
 app.timer('lift-auto-assignments', {
-  schedule: '0 */1 * * * *',
+  // Running every 10 minutes
+  schedule: '0 */10 * * * *',
   handler: liftAutoAssignments,
 });

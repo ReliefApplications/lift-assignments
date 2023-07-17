@@ -1,0 +1,27 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "AzureWebJobsFeatureFlags": "EnableWorkerIndexing",
+    // keycloak settings
+    "KEYCLOAK_AUTH_URL": "",
+    "KEYCLOAK_REALM": "oort",
+    "KEYCLOAK_CLIENT_ID": "oort-client",
+
+    // user credentials
+    "KEYCLOAK_USERNAME": "",
+    "KEYCLOAK_PASSWORD": "",
+
+    // server settings
+    "OORT_GRAPHQL_URL": "",
+    "OORT_URL": "",
+
+    // resources to be used in automated assignment
+    // should be in the format: [[queryName, inspectorsForm, countryName]] where:
+    //   -> queryName: the name of the query corresponding to the country requests form
+    //   -> inspectorsForm: the id of the form that contains the inspectors for the country
+    //   -> countryName: the name of country (used for logs and identification mainly)
+    "RESOURCES": "[['\"'allRegisterAComplaints\", \"6442428c6fc5b063e293b6fd\", \"Cook Islands\"]]"
+  }
+}

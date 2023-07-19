@@ -55,7 +55,7 @@ type UnassignedComplaintsResponse = {
     node: {
       id: string;
       incrementalId: string;
-      compl_type: string[];
+      compl_type: string;
       region?: {
         Region: string;
       };
@@ -75,7 +75,7 @@ export const getUnassignedComplaints = async (
       id: edge.node.id,
       incrementalId: edge.node.incrementalId,
       region: edge.node.region?.Region,
-      complaintType: edge.node.compl_type.map((type) => COMPL_TYPE_MAP[type]),
+      complaintType: COMPL_TYPE_MAP[edge.node.compl_type ?? '1'],
     }));
   } catch (err) {
     context.error('Error fetching unassigned complaints:', err);

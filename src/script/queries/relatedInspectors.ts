@@ -7,39 +7,36 @@ const SPECIALIZATION_MAP: Record<string, string> = {
   '3': 'SS',
 };
 
-const GET_RELATED_INSPECTORS = (form: string) =>
+const GET_RELATED_INSPECTORS = (queryName: string) =>
   JSON.stringify({
     operationName: 'GetCustomQuery',
     variables: {
-      first: 10,
+      first: 100,
       filter: {
         logic: 'and',
         filters: [
           {
-            field: 'form',
+            field: 'role',
             operator: 'eq',
-            value: `${form}`,
+            value: '1',
           },
         ],
       },
-      sortOrder: 'asc',
-      styles: [],
     },
-    query:
-      'query GetCustomQuery($first: Int, $skip: Int, $filter: JSON, $sortField: String, $sortOrder: String, $display: Boolean, $styles: JSON) {\n  allInspectors(\n    first: $first\n    skip: $skip\n    sortField: $sortField\n    sortOrder: $sortOrder\n    filter: $filter\n    display: $display\n    styles: $styles\n  ) {\n    edges {\n      node {\n        canUpdate\n        canDelete\n        id\n        email\n        inspector_region {\n          Region\n          __typename\n        }\n        specialization\n        fullname\n        __typename\n      }\n      meta\n      __typename\n    }\n    totalCount\n    __typename\n  }\n}',
+    query: `query GetCustomQuery($first: Int, $filter: JSON) {\n  ${queryName}(\n    first: $first\n    filter: $filter) {\n    edges {\n      node {\n        canUpdate\n        canDelete\n        id\n        username\n        region {\n          Region\n          __typename\n        }\n        specialization\n        fullname\n        __typename\n      }\n      meta\n      __typename\n    }\n    totalCount\n    __typename\n  }\n}`,
   });
 
 type InspectorsResponse = {
-  allInspectors: {
+  [key in string]: {
     edges: {
       node: {
         id: string;
-        inspector_region?: {
+        region?: {
           Region: string;
         };
         specialization: string[];
         fullname: string;
-        email: string[];
+        username: string[];
       };
     }[];
 
@@ -48,22 +45,22 @@ type InspectorsResponse = {
 };
 
 export const getRelatedInspectors = async (
-  form: string,
+  queryName: string,
   context: InvocationContext
 ) => {
   try {
     const res = await buildOortQuery<InspectorsResponse>(
-      GET_RELATED_INSPECTORS(form)
+      GET_RELATED_INSPECTORS(queryName)
     );
 
-    return res.allInspectors.edges.map((edge) => ({
+    return res[queryName].edges.map((edge) => ({
       id: edge.node.id,
-      region: edge.node.inspector_region?.Region,
+      region: edge.node.region?.Region,
       specialization: edge.node.specialization.map(
         (specialization) => SPECIALIZATION_MAP[specialization]
       ),
       name: edge.node.fullname,
-      user: edge.node.email[0],
+      user: edge.node.username[0],
     }));
   } catch (err) {
     context.error('Error fetching inspectors:', err);

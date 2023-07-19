@@ -46,7 +46,7 @@ export const runAutoAssignment = async (context: InvocationContext) => {
 
   const resources = JSON.parse(process.env.RESOURCES);
 
-  for (const [queryName, inspectorForm, countryName] of resources) {
+  for (const [queryName, inspectorQueryName, countryName] of resources) {
     context.info(`Checking for unassigned complaints in ${countryName}...`);
 
     // For each query, get the unassigned complaints
@@ -63,7 +63,7 @@ export const runAutoAssignment = async (context: InvocationContext) => {
     // Get the inspectors for the same country as the complaint
     context.info(`Getting inspectors for ${countryName}...`);
     const relatedInspectors = await getRelatedInspectors(
-      inspectorForm,
+      inspectorQueryName,
       context
     );
 
@@ -133,7 +133,7 @@ export const runAutoAssignment = async (context: InvocationContext) => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Assign the complaint to the fittest inspector
-      await assignInspector(complaint.id, fittestInspector.user, context);
+      // await assignInspector(complaint.id, fittestInspector.user, context);
       inspectorWorkloads[fittestInspectorID]++;
 
       context.info(

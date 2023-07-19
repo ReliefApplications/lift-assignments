@@ -18,10 +18,10 @@
     "OORT_URL": "",
 
     // resources to be used in automated assignment
-    // should be in the format: [[queryName, inspectorsForm, countryName]] where:
-    //   -> queryName: the name of the query corresponding to the country requests form
-    //   -> inspectorsForm: the id of the form that contains the inspectors for the country
+    // should be in the format: [[complaintsQueryName, inspectorsQueryName, countryName]] where:
+    //   -> complaintsQueryName: the name of the query corresponding to the country requests form
+    //   -> inspectorsQueryName: the name of the query corresponding to the inspectors for the country
     //   -> countryName: the name of country (used for logs and identification mainly)
-    "RESOURCES": "[['\"'allRegisterAComplaints\", \"6442428c6fc5b063e293b6fd\", \"Cook Islands\"]]"
+    "RESOURCES": "[['\"'allCookIslandsRegisterAComplaints\", \"allCookIslandsStaffs\", \"Cook Islands\"]]"
   }
 }

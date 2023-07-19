@@ -33,7 +33,7 @@ type InspectorsResponse = {
         id: string;
         region?: {
           Region: string;
-        };
+        }[];
         specialization: string[];
         fullname: string;
         username: string[];
@@ -55,7 +55,7 @@ export const getRelatedInspectors = async (
 
     return res[queryName].edges.map((edge) => ({
       id: edge.node.id,
-      region: edge.node.region?.Region,
+      regions: (edge.node.region || []).map((x) => x.Region),
       specialization: edge.node.specialization.map(
         (specialization) => SPECIALIZATION_MAP[specialization]
       ),

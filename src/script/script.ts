@@ -7,7 +7,7 @@ import { getUnassignedComplaints } from './queries/unassignedComplaints';
 type InspectorScore = Record<
   string,
   {
-    isSameRegion: boolean;
+    worksInRegion: boolean;
     matchingSpecializations: number;
     workload: number;
   }
@@ -32,7 +32,7 @@ const getFittestScore = (scores: InspectorScore) => {
 
   // sort by same region
   sortedScores.sort(
-    (a, b) => (a[1].isSameRegion ? -1 : 1) - (b[1].isSameRegion ? -1 : 1)
+    (a, b) => (a[1].worksInRegion ? -1 : 1) - (b[1].worksInRegion ? -1 : 1)
   );
 
   // return the fittest inspector
@@ -100,7 +100,7 @@ export const runAutoAssignment = async (context: InvocationContext) => {
       for (const inspector of relatedInspectors) {
         if (!inspectorsScores[inspector.id]) {
           inspectorsScores[inspector.id] = {
-            isSameRegion: inspector.region === complaint.region,
+            worksInRegion: inspector.regions.includes(complaint.region),
             matchingSpecializations: inspector.specialization.reduce(
               (acc, spec) => {
                 if (complaint.complaintType.includes(spec)) acc++;
@@ -133,7 +133,7 @@ export const runAutoAssignment = async (context: InvocationContext) => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Assign the complaint to the fittest inspector
-      // await assignInspector(complaint.id, fittestInspector.user, context);
+      await assignInspector(complaint.id, fittestInspector.user, context);
       inspectorWorkloads[fittestInspectorID]++;
 
       context.info(

@@ -17,29 +17,9 @@ const GET_UNASSIGNED_COMPLAINTS = (queryName: string) =>
         logic: 'and',
         filters: [
           {
-            logic: 'and',
-            filters: [
-              {
-                field: 'complaint_receivable',
-                operator: 'eq',
-                value: true,
-              },
-              {
-                logic: 'or',
-                filters: [
-                  {
-                    field: 'complaint_status',
-                    operator: 'eq',
-                    value: 'Registered',
-                  },
-                  {
-                    field: 'complaint_status',
-                    operator: 'eq',
-                    value: 'Rejected background',
-                  },
-                ],
-              },
-            ],
+            field: 'complaint_status',
+            operator: 'eq',
+            value: 'Case validated',
           },
         ],
       },

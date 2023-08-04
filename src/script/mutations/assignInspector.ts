@@ -10,7 +10,8 @@ const ASSIGN_INSPECTOR = (request: string, inspector: string) =>
         date_assignment: new Date().toISOString(),
         inspector_assigned_users: [`${inspector}`],
         complaint_status: 'Assigned to inspector',
-        to_do: 'Accept complaint',
+        to_do_inspector: 'Accept case',
+        to_do_manager: 'Assigned to inspector',
       },
     },
     query:

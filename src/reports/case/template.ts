@@ -166,7 +166,11 @@ export const getCasePDF = (data: Case) => {
 
         body: [
           ['Item', 'Action', 'Comment'],
-          ...data.inspection.actions.map((x) => [x.point, x.action, x.comment]),
+          ...data.inspection.actions.map((x) => [
+            x.point || '',
+            x.action || '',
+            x.comment || '',
+          ]),
         ],
       },
     },
@@ -206,10 +210,10 @@ export const getCasePDF = (data: Case) => {
               body: [
                 ['Item', 'Corrected', 'New action', 'New comment'],
                 ...followUp.actions.map((x) => [
-                  x.point,
-                  getCorrectedText(x.status),
-                  x.action,
-                  x.comment,
+                  x.point || '',
+                  getCorrectedText(x.status) || '',
+                  x.action || '',
+                  x.comment || '',
                 ]),
               ],
             },

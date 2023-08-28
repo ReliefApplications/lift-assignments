@@ -103,13 +103,13 @@ export const getCaseReport = async (
   const formattedCaseData = {
     // Enterprise information
     enterprise: {
-      name: caseData.enterprise_context.name,
-      address: caseData.enterprise_context.address,
-      id: caseData.enterprise_context.incrementalId,
-      repName: `${caseData.enterprise_context.legal_rep_first_name || ''} ${
-        caseData.enterprise_context.legal_rep_last_name || ''
+      name: caseData.enterprise_context?.name,
+      address: caseData.enterprise_context?.address,
+      id: caseData.enterprise_context?.incrementalId,
+      repName: `${caseData.enterprise_context?.legal_rep_first_name || ''} ${
+        caseData.enterprise_context?.legal_rep_last_name || ''
       }`,
-      // comments: caseData.enterprise_context.comments, (MISSING FIELD)
+      // comments: caseData.enterprise_context?.comments, (MISSING FIELD)
     },
 
     // Inspection information

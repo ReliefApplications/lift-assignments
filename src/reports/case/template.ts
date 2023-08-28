@@ -1,5 +1,4 @@
 import pdfMake from 'pdfmake';
-import { TDocumentDefinitions } from 'pdfmake/interfaces';
 import { getCaseReport } from '.';
 
 type Case = Awaited<ReturnType<typeof getCaseReport>>;
@@ -36,14 +35,17 @@ export const getCasePDF = (data: Case) => {
     },
   });
   const docDefinition = {
-    header: {
-      columns: [
-        {
-          image: 'assets/ilo.png',
-          width: 75,
-          margin: 20,
-        },
-      ],
+    header: (currentPage) => {
+      if (currentPage === 1) {
+        return [
+          {
+            image: 'assets/ilo.png',
+            width: 75,
+            margin: 20,
+          },
+        ];
+      }
+      return [];
     },
 
     pageMargins: [40, 40, 40, 40],
@@ -162,7 +164,7 @@ export const getCasePDF = (data: Case) => {
       layout: 'lightHorizontalLines',
       table: {
         headerRows: 1,
-        widths: ['*', 'auto', '*'],
+        widths: ['*', '15%', 'auto'],
 
         body: [
           ['Item', 'Action', 'Comment'],
@@ -205,7 +207,7 @@ export const getCasePDF = (data: Case) => {
             layout: 'lightHorizontalLines',
             table: {
               headerRows: 1,
-              widths: ['*', 'auto', 'auto', '*'],
+              widths: ['*', '15%', '15%', 'auto'],
 
               body: [
                 ['Item', 'Corrected', 'New action', 'New comment'],
@@ -288,9 +290,7 @@ export const getCasePDF = (data: Case) => {
     content,
   });
 
-  const doc = printer.createPdfKitDocument(
-    docDefinition as TDocumentDefinitions
-  );
+  const doc = printer.createPdfKitDocument(docDefinition as any);
 
   return new Promise((resolve) => {
     const chunks = [];

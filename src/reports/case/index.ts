@@ -71,7 +71,11 @@ const extractFollowUpActions = (
 
     for (const row of rows) {
       // Now we need to get the readable name of the row from the structure
-      const readableName = getReadableName(structure, checklist, row);
+      const readableName = getReadableName(
+        structure,
+        `${checklist}${followUp}`,
+        row
+      );
       if (checklistData[row][`${followUp}_status`]) {
         actions.push({
           point: readableName,

@@ -1,5 +1,5 @@
 import { app, InvocationContext, Timer } from '@azure/functions';
-import { runAutoAssignment } from '../script/script';
+import { runAutoAssignment } from '../assignment/script';
 
 export async function liftAutoAssignments(
   _: Timer,

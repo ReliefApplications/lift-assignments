@@ -1,5 +1,5 @@
 import { InvocationContext } from '@azure/functions';
-import { buildOortQuery } from '../connector';
+import { buildOortQuery } from '../../shared/connector';
 
 const ASSIGN_INSPECTOR = (request: string, inspector: string) =>
   JSON.stringify({

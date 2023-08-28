@@ -1,5 +1,5 @@
 import { InvocationContext } from '@azure/functions';
-import { buildOortQuery } from '../connector';
+import { buildOortQuery } from '../../shared/connector';
 
 const COMPL_TYPE_MAP: Record<string, string> = {
   '1': 'GLS',

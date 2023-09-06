@@ -23,7 +23,6 @@ const GET_CASE_DETAILS = (caseID: string, queryName: string) =>
             node {
               id
               incrementalId
-              inspection_report_comment
               inspector_assigned_users
 
               checklist_gls_actions
@@ -68,6 +67,13 @@ const GET_CASE_DETAILS = (caseID: string, queryName: string) =>
               date_follow_up_4
               date_follow_up_5
 
+              inspection_report_comment
+              follow_up_comment
+              follow_up_2_comment
+              follow_up_3_comment
+              follow_up_4_comment
+              follow_up_5_comment
+
               enterprise_context {
                 id
                 name
@@ -111,7 +117,6 @@ type CaseDetailsResponse = {
         id: string;
         incrementalId: string;
         date_inspection_conducted: string;
-        inspection_report_comment: string;
         inspector_assigned_users: string[];
 
         checklist_gls_actions: Checklist;
@@ -154,6 +159,13 @@ type CaseDetailsResponse = {
         date_follow_up_3: string;
         date_follow_up_4: string;
         date_follow_up_5: string;
+
+        inspection_report_comment: string;
+        follow_up_comment: string;
+        follow_up_2_comment: string;
+        follow_up_3_comment: string;
+        follow_up_4_comment: string;
+        follow_up_5_comment: string;
 
         enterprise_context: {
           id: string;

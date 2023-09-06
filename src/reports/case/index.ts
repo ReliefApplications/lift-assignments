@@ -133,13 +133,16 @@ export const getCaseReport = async (
           return null;
         }
 
-        // Get the follow up date
+        // Date key for respective follow up
         const followUpDate = `date_${followUp}`;
-        const followUpDateData = caseData[followUpDate];
+
+        // Comment key for respective follow up
+        const followUpComment = `${followUp}_comment`;
 
         return {
-          date: followUpDateData,
+          date: caseData[followUpDate],
           actions: extractFollowUpActions(caseData, followUp, structure),
+          comments: caseData[followUpComment],
         };
       })
       .filter((f) => f !== null),

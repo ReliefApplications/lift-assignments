@@ -141,20 +141,22 @@ export const getCasePDF = (data: Case) => {
         },
       ],
     },
-    data.inspection.comments && {
-      columns: [
-        {
-          text: 'Comments:',
-          width: 'auto',
-          bold: true,
-        },
-        {
-          text: data.inspection.comments,
-        },
-      ],
-      columnGap: 5,
-      margin: [0, 15, 0, 0],
-    },
+    data.inspection.comments
+      ? {
+          columns: [
+            {
+              text: 'Comments:',
+              width: 'auto',
+              bold: true,
+            },
+            {
+              text: data.inspection.comments,
+            },
+          ],
+          columnGap: 5,
+          margin: [0, 15, 0, 0],
+        }
+      : undefined,
     {
       text: 'Inspection actions',
       margin: [0, 10],
@@ -195,13 +197,42 @@ export const getCasePDF = (data: Case) => {
         ],
         margin: [0, 20, 0, 0],
       },
-      followUp.actions.length
+      followUp.comments
         ? {
-            text: 'Inspection actions',
-            margin: [0, 10],
-            bold: true,
+            columns: [
+              {
+                text: 'Comments:',
+                width: 'auto',
+                bold: true,
+              },
+              {
+                text: followUp.comments,
+              },
+            ],
+            columnGap: 5,
+            margin: [0, 15, 0, 0],
           }
-        : undefined,
+        : '',
+      {
+        columns: [
+          {
+            text: `Inspection actions${
+              followUp.actions.length === 0 ? ':' : ''
+            }`,
+            bold: true,
+            width: 'auto',
+          },
+          followUp.actions.length === 0
+            ? {
+                text: 'No issue noted',
+                width: 'auto',
+              }
+            : '',
+        ],
+        margin: [0, 10],
+        columnGap: 5,
+      },
+
       followUp.actions.length
         ? {
             layout: 'lightHorizontalLines',

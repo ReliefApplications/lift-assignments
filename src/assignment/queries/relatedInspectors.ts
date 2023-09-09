@@ -23,7 +23,7 @@ const GET_RELATED_INSPECTORS = (queryName: string) =>
         ],
       },
     },
-    query: `query GetCustomQuery($first: Int, $filter: JSON) {\n  ${queryName}(\n    first: $first\n    filter: $filter) {\n    edges {\n      node {\n        canUpdate\n        canDelete\n        id\n        username\n        region {\n          Name\n          __typename\n        }\n        specialization\n        fullname\n        __typename\n      }\n      meta\n      __typename\n    }\n    totalCount\n    __typename\n  }\n}`,
+    query: `query GetCustomQuery($first: Int, $filter: JSON) {\n  ${queryName}(\n    first: $first\n    filter: $filter) {\n    edges {\n      node {\n        canUpdate\n        canDelete\n        id\n        username\n        region {\n          Region\n          __typename\n        }\n        specialization\n        fullname\n        __typename\n      }\n      meta\n      __typename\n    }\n    totalCount\n    __typename\n  }\n}`,
   });
 
 type InspectorsResponse = {
@@ -32,7 +32,7 @@ type InspectorsResponse = {
       node: {
         id: string;
         region?: {
-          Name: string;
+          Region: string;
         }[];
         specialization: string[];
         fullname: string;
@@ -55,7 +55,7 @@ export const getRelatedInspectors = async (
 
     return res[queryName].edges.map((edge) => ({
       id: edge.node.id,
-      regions: (edge.node.region || []).map((x) => x.Name),
+      regions: (edge.node.region || []).map((x) => x.Region),
       specialization: edge.node.specialization.map(
         (specialization) => SPECIALIZATION_MAP[specialization]
       ),

@@ -35,7 +35,7 @@ type UnassignedComplaintsResponse = {
     node: {
       id: string;
       incrementalId: string;
-      compl_type: string;
+      compl_type: string[] | string;
       region?: {
         Name: string;
       };
@@ -51,12 +51,19 @@ export const getUnassignedComplaints = async (
     const res = await buildOortQuery<any>(GET_UNASSIGNED_COMPLAINTS(queryName));
     const data = res[queryName] as UnassignedComplaintsResponse;
 
-    return data.edges.map((edge) => ({
-      id: edge.node.id,
-      incrementalId: edge.node.incrementalId,
-      region: edge.node.region?.Name,
-      complaintType: COMPL_TYPE_MAP[edge.node.compl_type ?? '1'],
-    }));
+    return data.edges.map((edge) => {
+      const compType =
+        typeof edge.node.compl_type === 'string'
+          ? edge.node.compl_type
+          : edge.node.compl_type?.[0];
+
+      return {
+        id: edge.node.id,
+        incrementalId: edge.node.incrementalId,
+        region: edge.node.region?.Name,
+        complaintType: COMPL_TYPE_MAP[compType ?? '1'],
+      };
+    });
   } catch (err) {
     context.error('Error fetching unassigned complaints:', err);
     return [];

@@ -183,12 +183,14 @@ type CaseDetailsResponse = {
 export const getCaseDetails = async (
   caseID: string,
   queryName: string,
+  token: string,
   context: InvocationContext
 ) => {
   try {
     // First we need to get the queryName for the case record
     const res = await buildOortQuery<CaseDetailsResponse>(
-      GET_CASE_DETAILS(caseID, queryName)
+      GET_CASE_DETAILS(caseID, queryName),
+      token
     );
 
     return res[queryName]?.edges?.[0]?.node ?? null;

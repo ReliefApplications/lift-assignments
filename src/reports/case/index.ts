@@ -2,6 +2,8 @@ import { Checklist, getCaseDetails } from '../queries/getCaseDetails';
 import { getCaseForm } from '../queries/getCaseForm';
 import { InvocationContext } from '@azure/functions';
 import { getInspectorDetails } from '../queries/getInspectorInfo';
+import { getCasePDF } from './template';
+import { Case } from './types';
 
 const MAX_FOLLOW_UPS = 5;
 
@@ -92,19 +94,20 @@ const extractFollowUpActions = (
 
 export const getCaseReport = async (
   caseID: string,
-  context: InvocationContext
+  context: InvocationContext,
+  token: string
 ) => {
   // Get the form linked to the case
-  const form = await getCaseForm(caseID, context);
+  const form = await getCaseForm(caseID, token, context);
   if (!form) {
     throw new Error(`Case ${caseID} has no form!`);
   }
 
   const { structure, queryName } = form;
-  const caseData = await getCaseDetails(caseID, queryName, context);
+  const caseData = await getCaseDetails(caseID, queryName, token, context);
 
   // Following the order of the report structure (https://miro.com/app/board/uXjVM0lP5F8=/)
-  const formattedCaseData = {
+  const formattedCaseData: Case = {
     // Enterprise information
     enterprise: {
       name: caseData.enterprise_context?.name,
@@ -151,6 +154,7 @@ export const getCaseReport = async (
       caseData.inspector_assigned_users &&
       (await getInspectorDetails(
         caseData.inspector_assigned_users[0],
+        token,
         context
       )),
 
@@ -159,5 +163,6 @@ export const getCaseReport = async (
     // notificationDate: caseData.notification_date, (MISSING FIELD)
   };
 
-  return formattedCaseData;
+  const pdf = await getCasePDF(formattedCaseData);
+  return { pdf, fileName: `Report-${caseData.incrementalId}.pdf` };
 };

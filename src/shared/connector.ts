@@ -21,10 +21,11 @@ export const getOortToken = async () => {
  * @param query Query string, variables should be in the format of $variableName
  * @param variables Object containing the variables to be used in the query
  */
-export const buildOortQuery = async <T>(query: string) => {
+export const buildOortQuery = async <T>(query: string, token?: string) => {
   let parsedQuery = query;
 
-  const token = await getOortToken();
+  // Some queries should be done user the user's token
+  token = token || (await getOortToken());
 
   return new Promise<T>(async (resolve, reject) => {
     fetch(process.env.OORT_GRAPHQL_URL || '', {

@@ -4,7 +4,11 @@ import { getCaseReport } from './case';
 /** All available reports */
 export const AVAILABLE_REPORTS: {
   name: string;
-  fn: (recordID: string, context: InvocationContext) => any;
+  fn: (
+    recordID: string,
+    context: InvocationContext,
+    token?: string
+  ) => Promise<{ pdf: any; fileName: string }>;
 }[] = [{ name: 'case', fn: getCaseReport }];
 
 /**

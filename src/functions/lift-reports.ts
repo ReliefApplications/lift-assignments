@@ -16,17 +16,24 @@ export async function liftReports(
   if (!reportFn) {
     return {
       status: 404,
-      body: `Report ${reportName} not found!`,
+      body: `Report ${reportName} not found.`,
     };
   }
-  const report = await reportFn(contextID, context);
+  // Get bearer token
+  const token = request.headers.get('authorization')?.split(' ')[1];
+  if (!token) {
+    return {
+      status: 401,
+      body: 'Authorization missing.',
+    };
+  }
 
-  const pdf = await getCasePDF(report);
+  const { pdf, fileName } = await reportFn(contextID, context, token);
 
   return {
     body: pdf as any,
     headers: {
-      'Content-Disposition': `attachment; filename=Report-${report.caseID}.pdf`,
+      'Content-Disposition': `attachment; filename=${fileName}`,
     },
   };
 }

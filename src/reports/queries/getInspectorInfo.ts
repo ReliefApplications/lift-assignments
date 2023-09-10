@@ -22,11 +22,13 @@ type InspectorDetailsResponse = {
 
 export const getInspectorDetails = async (
   inspectorID: string,
+  token: string,
   context: InvocationContext
 ) => {
   try {
     const res = await buildOortQuery<InspectorDetailsResponse>(
-      GET_INSPECTOR_DETAILS(inspectorID)
+      GET_INSPECTOR_DETAILS(inspectorID),
+      token
     );
 
     return res.user;

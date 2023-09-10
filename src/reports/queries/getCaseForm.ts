@@ -30,12 +30,14 @@ type CaseFormResponse = {
 
 export const getCaseForm = async (
   queryName: string,
+  token: string,
   context: InvocationContext
 ) => {
   try {
     // First we need to get the queryName for the case record
     const caseFormRes = await buildOortQuery<CaseFormResponse>(
-      GET_CASE_FORM(queryName)
+      GET_CASE_FORM(queryName),
+      token
     );
     return caseFormRes.record.form;
   } catch (err) {

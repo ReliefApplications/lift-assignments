@@ -1,7 +1,5 @@
 import pdfMake from 'pdfmake';
-import { getCaseReport } from '.';
-
-type Case = Awaited<ReturnType<typeof getCaseReport>>;
+import { Case } from './types';
 
 const getIntlDate = (date: string | Date) => {
   const d = new Date(date);

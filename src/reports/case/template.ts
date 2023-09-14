@@ -23,7 +23,7 @@ const getCorrectedText = (status: string) => {
   }
 };
 
-export const getCasePDF = (data: Case) => {
+export const getCasePDF = (data: Case, flag: string) => {
   const printer = new pdfMake({
     Roboto: {
       normal: 'fonts/Roboto-Regular.ttf',
@@ -34,12 +34,12 @@ export const getCasePDF = (data: Case) => {
   });
   const docDefinition = {
     header: (currentPage) => {
-      if (currentPage === 1) {
+      if (currentPage === 1 && flag) {
         return [
           {
-            image: 'assets/ilo.png',
-            width: 75,
-            margin: 20,
+            image: flag,
+            width: 100,
+            margin: 40,
           },
         ];
       }
@@ -239,7 +239,7 @@ export const getCasePDF = (data: Case) => {
               widths: ['*', '15%', '15%', 'auto'],
 
               body: [
-                ['Item', 'Corrected', 'New action', 'New comment'],
+                ['Item', 'Corrected', 'Action', 'New comment'],
                 ...followUp.actions.map((x) => [
                   x.point || '',
                   getCorrectedText(x.status) || '',

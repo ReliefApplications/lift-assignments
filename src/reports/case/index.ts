@@ -163,6 +163,15 @@ export const getCaseReport = async (
     // notificationDate: caseData.notification_date, (MISSING FIELD)
   };
 
-  const pdf = await getCasePDF(formattedCaseData, JSON.parse(structure).logo);
+  // Get the logo
+  let logo = JSON.parse(structure).logo;
+  if (typeof logo === 'object') {
+    logo = logo.default;
+  }
+
+  const pdf = await getCasePDF(
+    formattedCaseData,
+    typeof logo === 'string' ? logo : undefined
+  );
   return { pdf, fileName: `Report-${caseData.incrementalId}.pdf` };
 };

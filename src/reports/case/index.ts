@@ -151,9 +151,9 @@ export const getCaseReport = async (
       .filter((f) => f !== null),
 
     inspector:
-      caseData.inspector_assigned_users &&
+      caseData.last_inspector_assigned_users &&
       (await getInspectorDetails(
-        caseData.inspector_assigned_users[0],
+        caseData.last_inspector_assigned_users[0],
         token,
         context
       )),

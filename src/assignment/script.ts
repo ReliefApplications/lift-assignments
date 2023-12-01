@@ -3,6 +3,7 @@ import { assignInspector } from './mutations/assignInspector';
 import { getInspectorWorkload } from './queries/getInspectorWorkload';
 import { getRelatedInspectors } from './queries/relatedInspectors';
 import { getUnassignedComplaints } from './queries/unassignedComplaints';
+import { getRejectedComplaints } from './queries/rejectedComplaints';
 
 type InspectorScore = Record<
   string,
@@ -13,8 +14,11 @@ type InspectorScore = Record<
   }
 >;
 
-const getFittestScore = (scores: InspectorScore) => {
-  const inspectorEntries = Object.entries(scores);
+const getFittestScore = (scores: InspectorScore, rejectedBy?: string) => {
+  const inspectorEntries = Object.entries(scores).filter(
+    ([inspectorID]) => inspectorID !== rejectedBy
+  );
+
   // if no inspectors, return null
   if (!inspectorEntries.length) return null;
 
@@ -58,7 +62,16 @@ export const runAutoAssignment = async (context: InvocationContext) => {
       `\tFound ${unassignedComplaints.length} unassigned complaint(s)`
     );
 
-    if (!unassignedComplaints.length) continue;
+    context.info(`Checking for rejected complaints in ${countryName}...`);
+
+    // Get the complaints that have been rejected by an inspector and need to be reassigned
+    const rejectedComplaints = await getRejectedComplaints(queryName, context);
+
+    context.info(`\tFound ${rejectedComplaints.length} rejected complaint(s)`);
+
+    if (!unassignedComplaints.length && !rejectedComplaints.length) {
+      continue;
+    }
 
     // Get the inspectors for the same country as the complaint
     context.info(`Getting inspectors for ${countryName}...`);
@@ -95,7 +108,7 @@ export const runAutoAssignment = async (context: InvocationContext) => {
     );
 
     // For each unassigned complaint, find the fittest inspector
-    for (const complaint of unassignedComplaints) {
+    for (const complaint of [...rejectedComplaints, ...unassignedComplaints]) {
       const inspectorsScores: InspectorScore = {};
       for (const inspector of relatedInspectors) {
         if (!inspectorsScores[inspector.id]) {
@@ -113,8 +126,11 @@ export const runAutoAssignment = async (context: InvocationContext) => {
         }
       }
 
-      // Get the fittest inspector
-      const fittestInspectorID = getFittestScore(inspectorsScores);
+      // Get the fittest inspector, if the complaint was rejected, exclude the inspector that rejected it
+      const fittestInspectorID = getFittestScore(
+        inspectorsScores,
+        relatedInspectors.find((i) => i.user === complaint.rejectedBy)?.id
+      );
 
       if (!fittestInspectorID) {
         context.error(`No inspectors found for query ${queryName}`);
@@ -133,7 +149,12 @@ export const runAutoAssignment = async (context: InvocationContext) => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Assign the complaint to the fittest inspector
-      await assignInspector(complaint.id, fittestInspector.user, context);
+      await assignInspector(
+        complaint.id,
+        fittestInspector.user,
+        !!complaint.rejectedBy,
+        context
+      );
       inspectorWorkloads[fittestInspectorID]++;
 
       context.info(

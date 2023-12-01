@@ -1,25 +1,29 @@
 import { InvocationContext } from '@azure/functions';
 import { buildOortQuery } from '../../shared/connector';
+import { COMPL_TYPE_MAP } from './unassignedComplaints';
 
-export const COMPL_TYPE_MAP: Record<string, string> = {
-  '1': 'GLS',
-  '2': 'OSH',
-  '3': 'OSH',
-  '4': 'SS',
-};
-
-const GET_UNASSIGNED_COMPLAINTS = (queryName: string) =>
+const GET_REJECTED_COMPLAINTS = (queryName: string) =>
   JSON.stringify({
-    operationName: 'GetUnassignedComplaints',
+    operationName: 'GetRejectedComplaints',
     variables: {
       first: 50,
       filter: {
         logic: 'and',
         filters: [
           {
-            field: 'complaint_status',
+            field: 'accept',
             operator: 'eq',
-            value: 'Case validated',
+            value: false,
+          },
+          {
+            field: 'reason_for_declining',
+            operator: 'isnotempty',
+            value: null,
+          },
+          {
+            field: 'reassignment_bool',
+            operator: 'neq',
+            value: true,
           },
         ],
       },
@@ -27,7 +31,7 @@ const GET_UNASSIGNED_COMPLAINTS = (queryName: string) =>
       sortOrder: 'desc',
       styles: [],
     },
-    query: `query GetUnassignedComplaints(
+    query: `query GetRejectedComplaints(
       $first: Int
       $filter: JSON
       $sortField: String
@@ -43,11 +47,13 @@ const GET_UNASSIGNED_COMPLAINTS = (queryName: string) =>
       ) {
         edges {
           node {
-            canUpdate
-            canDelete
             id
+            last_inspector_assigned_users
             incrementalId
             compl_type
+            accept
+            reason_for_declining
+            reassignment_bool
             region {
               Name
             }
@@ -59,11 +65,12 @@ const GET_UNASSIGNED_COMPLAINTS = (queryName: string) =>
     }`,
   });
 
-type UnassignedComplaintsResponse = {
+type RejectedComplaintsResponse = {
   edges: {
     node: {
       id: string;
       incrementalId: string;
+      last_inspector_assigned_users: string[];
       compl_type: string[] | string;
       region?: {
         Name: string;
@@ -72,14 +79,13 @@ type UnassignedComplaintsResponse = {
   }[];
 };
 
-export const getUnassignedComplaints = async (
+export const getRejectedComplaints = async (
   queryName: string,
   context: InvocationContext
 ) => {
   try {
-    const res = await buildOortQuery<any>(GET_UNASSIGNED_COMPLAINTS(queryName));
-    const data = res[queryName] as UnassignedComplaintsResponse;
-
+    const res = await buildOortQuery<any>(GET_REJECTED_COMPLAINTS(queryName));
+    const data = res[queryName] as RejectedComplaintsResponse;
     return data.edges.map((edge) => {
       const compType =
         typeof edge.node.compl_type === 'string'
@@ -91,7 +97,7 @@ export const getUnassignedComplaints = async (
         incrementalId: edge.node.incrementalId,
         region: edge.node.region?.Name,
         complaintType: COMPL_TYPE_MAP[compType ?? '1'],
-        rejectedBy: undefined as string | undefined,
+        rejectedBy: edge.node.last_inspector_assigned_users?.[0],
       };
     });
   } catch (err) {

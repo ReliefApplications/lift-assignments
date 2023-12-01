@@ -23,7 +23,7 @@ const GET_CASE_DETAILS = (caseID: string, queryName: string) =>
             node {
               id
               incrementalId
-              inspector_assigned_users
+              last_inspector_assigned_users
 
               checklist_gls_actions
               checklist_osh_ps_actions
@@ -117,7 +117,7 @@ type CaseDetailsResponse = {
         id: string;
         incrementalId: string;
         date_inspection_conducted: string;
-        inspector_assigned_users: string[];
+        last_inspector_assigned_users: string[];
 
         checklist_gls_actions: Checklist;
         checklist_osh_a_i_actions: Checklist;
